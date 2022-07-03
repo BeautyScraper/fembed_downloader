@@ -19,6 +19,9 @@ import os
 import time
 # breakpoint()
 # binary = FirefoxBinary(".\\geckodriver-v0.26.0-win64\\geckodriver.exe")
+
+website_name = 'sdefx.cloud' 
+
 opts = Options()
 # opts.set_headless()
 driver = webdriver.Firefox(options=opts)
@@ -42,7 +45,7 @@ def getLastArgWithoutException(testF,listResolution):
 
 def alreadyNotDone(func):
     def wrapper(*args, **kwargs):
-        filename = 'VideoList1.txt'
+        filename = website_name+'.txt'
         p = "".join(args)
         print(p)
         ret = gC.rssImageExtractor()
@@ -59,39 +62,33 @@ def VideoDownload(url):
     driver.get(url)
 
     # breakpoint()
-    filename = driver.find_elements_by_css_selector("p")[1].text[:100]+'HD.mp4'  
-    all_servers = driver.find_elements_by_css_selector("span.server")
-    streamsb_index = [i for i,t in enumerate(all_servers) if t.text == 'fembed'][0]
-    y = driver.find_element_by_css_selector("#player-option-"+str(streamsb_index+1))
-    y.click()
+
     # driver.find_element_by_css_selector("div#loading")
     # driver.find_element(by=By.CSS_SELECTOR, value="div#loading")
     # breakpoint()
     # driver.execute_script("arguments[0].click();", streamsb)
-    fp = open('index.vid','w')
+    fpPath = r'C:\Personal\Developed\GalleryDownloader\galleryLinks.opml'
+    fp = open(fpPath,'a+')
                 
     time.sleep(10)
     
     
     for request in driver.requests:
-        if request.response and 'watchjavnow.xyz/api/source/' in request.url:
-            fp.write(request.url+'\n')
-            body = decode(request.response.body, request.response.headers.get('Content-Encoding', 'identity'))
-            fp.write(
-            str(body)
-            )
-            
+        # https://streamtape.com/e/1RL4VXgYmoSewZw
+        srstring = 'https://streamtape.com/e/'
+        if srstring in request.url:
+            fp.write(request.url.replace('/e/', '/v/')+'\n')
     fp.close()
-    resp = json.loads(body.decode("utf-8"))  
-    videoUrl = resp['data'][-1]['file']
-    videoUrl = videoUrl.replace('\\\\','\\')  
-    driver.get('http://192.168.0.114')
-    savePath = Path("D:\\paradise\\stuff\\new\\JAV")
-    savePath.mkdir(exist_ok=True,parents=True)
-    print(videoUrl)
+    # resp = json.loads(body.decode("utf-8"))  
+    # videoUrl = resp['data'][-1]['file']
+    # videoUrl = videoUrl.replace('\\\\','\\')  
+    # driver.get('http://192.168.0.114')
+    # savePath = Path("D:\\paradise\\stuff\\new\\JAV")
+    # savePath.mkdir(exist_ok=True,parents=True)
+    # print(videoUrl)
     # import pdb;pdb.set_trace()
     # breakpoint()
-    ariaDownload(videoUrl, str(savePath), filename)
+    # ariaDownload(videoUrl, str(savePath), filename)
     
 def ariaDownload(url,downPath,filename,connections=4):
     # import pdb;pdb.set_trace()
@@ -109,8 +106,8 @@ def UserCommand(key=b'm'):
 if __name__ == "__main__":
     with open("test.opml","r") as fp:
         for url in fp:
-            if not 'javgg' in url:
-                continue 
+            if not website_name in url and not 'strdef.world' in url:
+                continue
             if UserCommand(b'q'):
               print('Closing webDriver')
               break  
